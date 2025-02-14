@@ -112,27 +112,39 @@ export default function App() {
 
 			if (response) {
 				const { account: sessionAccount } = response
+				const isDeployed = await sessionAccount.isDeployed()
 
-				if (response.deploymentPayload) {
+				if (response.deploymentPayload && !isDeployed && response.approvalRequestsCalls) {
 					console.log("Deploying an account");
-					const isDeployed = await sessionAccount.isDeployed()
+					setConnectStatus("Deploying account")
 
-					if (!isDeployed && response.approvalRequestsCalls) {
-						setConnectStatus("Deploying account")
+					const resp = await deployAndExecuteWithPaymaster(sessionAccount, paymasterParams, response.deploymentPayload, response.approvalRequestsCalls)
 
-						const resp = await deployAndExecuteWithPaymaster(sessionAccount, paymasterParams, response.deploymentPayload, response.approvalRequestsCalls)
+					if (resp) {
+						console.log("Deployment hash: ", resp.transaction_hash);
 
-						if (resp) {
-							console.log("Deployment hash: ", resp.transaction_hash);
+						await provider.waitForTransaction(resp.transaction_hash)
 
-							await provider.waitForTransaction(resp.transaction_hash)
-
-							console.log("Account deployed");
-						}
-
-					} else {
-						console.log("Account already deployed");
+						console.log("Account deployed");
 					}
+
+				} else if (response.approvalRequestsCalls) {
+					console.log("Sending Approvals");
+
+					const { transaction_hash } = await sessionAccount.execute(response.approvalRequestsCalls);
+
+					console.log("Approvals hash: ", transaction_hash);
+
+					await provider.waitForTransaction(transaction_hash)
+
+					console.log("Approvals minted", transaction_hash);
+				}
+
+				if (response.approvalTransactionHash) {
+					console.log("Waiting for approval", response.approvalTransactionHash);
+					await provider.waitForTransaction(response.approvalTransactionHash)
+
+					console.log("Approvals minted", response.approvalTransactionHash);
 				}
 
 				setAccount(sessionAccount);
