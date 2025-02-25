@@ -26,7 +26,7 @@ export default function App() {
 
 	const argentWebWallet = ArgentWebWallet.init({
 		appName: "Test",
-		environment: "sepolia",
+		environment: (process.env.NEXT_PUBLIC_ENV_NAME) as "mainnet" | "sepolia" || "sepolia",
 		sessionParams: {
 			allowedMethods: [
 				{
