@@ -4,11 +4,15 @@ import { useCallback, useEffect, useState } from "react";
 import { RpcProvider, constants } from "starknet";
 import { ArgentWebWallet, deployAndExecuteWithPaymaster, SessionAccountInterface } from "@argent/webwallet-sdk";
 
+const envName = (process.env.NEXT_PUBLIC_ENV_NAME) as "mainnet" | "sepolia"
+const isMainnet = envName === "mainnet";
+const chainId = isMainnet ? constants.StarknetChainId.SN_MAIN : constants.StarknetChainId.SN_SEPOLIA;
+
 const ARGENT_DUMMY_CONTRACT_ADDRESS =
-	process.env.NEXT_PUBLIC_ENV_NAME === "mainnet" ? "0x001c515f991f706039696a54f6f33730e9b0e8cc5d04187b13c2c714401acfd4" : "0x07557a2fbe051e6327ab603c6d1713a91d2cfba5382ac6ca7de884d3278636d7";
+	isMainnet ? "0x001c515f991f706039696a54f6f33730e9b0e8cc5d04187b13c2c714401acfd4" : "0x07557a2fbe051e6327ab603c6d1713a91d2cfba5382ac6ca7de884d3278636d7";
 const ARGENT_DUMMY_CONTRACT_ENTRYPOINT = "increase_number";
 
-const paymasterParams = {
+const paymasterParams = isMainnet ? undefined : {
 	apiKey: process.env.NEXT_PUBLIC_AVNU_PAYMASTER_API_KEY,
 }
 
@@ -20,14 +24,14 @@ export default function App() {
 	const [connectStatus, setConnectStatus] = useState<"Connect" | "Connecting" | "Deploying account">("Connect");
 
 	const provider = new RpcProvider({
-		chainId: process.env.NEXT_PUBLIC_ENV_NAME === "mainnet" ? constants.StarknetChainId.SN_MAIN : constants.StarknetChainId.SN_SEPOLIA,
+		chainId: chainId,
 		nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
 		headers: JSON.parse(process.env.NEXT_PUBLIC_RPC_HEADERS || "{}"),
 	});
 
 	const argentWebWallet = ArgentWebWallet.init({
 		appName: "Test",
-		environment: (process.env.NEXT_PUBLIC_ENV_NAME) as "mainnet" | "sepolia" || "sepolia",
+		environment:  envName || "sepolia",
 		sessionParams: {
 			allowedMethods: [
 				{
@@ -115,7 +119,7 @@ export default function App() {
 				const { account: sessionAccount } = response
 				const isDeployed = await sessionAccount.isDeployed()
 
-				if (response.deploymentPayload && !isDeployed && response.approvalRequestsCalls) {
+				if (response.deploymentPayload && !isDeployed && response.approvalRequestsCalls && paymasterParams) {
 					console.log("Deploying an account");
 					setConnectStatus("Deploying account")
 
