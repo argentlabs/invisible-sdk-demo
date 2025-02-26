@@ -39,6 +39,7 @@ export default function App() {
 					selector: ARGENT_DUMMY_CONTRACT_ENTRYPOINT,
 				},
 			],
+			validityDays: Number(process.env.NEXT_PUBLIC_VALIDITY_DAYS) || undefined,
 		},
 		paymasterParams,
 	});
