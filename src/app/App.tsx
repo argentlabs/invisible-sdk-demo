@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import { RpcProvider, constants } from "starknet";
 import { ArgentWebWallet, deployAndExecuteWithPaymaster, SessionAccountInterface } from "@argent/webwallet-sdk";
 
-const ARGENT_DUMMY_CONTRACT_ADDRESS = "0x07557a2fbe051e6327ab603c6d1713a91d2cfba5382ac6ca7de884d3278636d7";
+const ARGENT_DUMMY_CONTRACT_ADDRESS =
+	process.env.NEXT_PUBLIC_ENV_NAME === "mainnet" ? "0x001c515f991f706039696a54f6f33730e9b0e8cc5d04187b13c2c714401acfd4" : "0x07557a2fbe051e6327ab603c6d1713a91d2cfba5382ac6ca7de884d3278636d7";
 const ARGENT_DUMMY_CONTRACT_ENTRYPOINT = "increase_number";
 
 const paymasterParams = {
@@ -19,7 +20,7 @@ export default function App() {
 	const [connectStatus, setConnectStatus] = useState<"Connect" | "Connecting" | "Deploying account">("Connect");
 
 	const provider = new RpcProvider({
-		chainId: constants.StarknetChainId.SN_SEPOLIA,
+		chainId: process.env.NEXT_PUBLIC_ENV_NAME === "mainnet" ? constants.StarknetChainId.SN_MAIN : constants.StarknetChainId.SN_SEPOLIA,
 		nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
 		headers: JSON.parse(process.env.NEXT_PUBLIC_RPC_HEADERS || "{}"),
 	});
