@@ -16,6 +16,8 @@ const paymasterParams = !process.env.NEXT_PUBLIC_AVNU_PAYMASTER_API_KEY ? undefi
 	apiKey: process.env.NEXT_PUBLIC_AVNU_PAYMASTER_API_KEY,
 }
 
+console.log(paymasterParams, envName);
+
 export default function App() {
 	const [account, setAccount] = useState<SessionAccountInterface | undefined>(undefined);
 	const [isLoading, setIsLoading] = useState(false);
