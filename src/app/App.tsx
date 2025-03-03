@@ -26,6 +26,7 @@ export default function App() {
 	const [isLoading, setIsLoading] = useState(false);
 	const [txHash, setTxHash] = useState<string | undefined>();
 	const [counter, setCounter] = useState<bigint | undefined>();
+	const [withApproval, setWithApproval] = useState<boolean>(true);
 	const [connectStatus, setConnectStatus] = useState<"Connect" | "Connecting" | "Deploying account">("Connect");
 
 	const provider = new RpcProvider({
@@ -101,7 +102,7 @@ export default function App() {
 
 	const handleConnect = async () => {
 		try {
-			console.log("Start connect");
+			console.log("Start connect, with approval requests: ", withApproval);
 
 			if (!provider) {
 				throw new Error("No provider provided");
@@ -111,14 +112,14 @@ export default function App() {
 
 			const response =  await argentWebWallet?.requestConnection({
 				callbackData: "custom_callback_data",
-				approvalRequests: [
+				approvalRequests: withApproval ? [
 					{
 						tokenAddress: "0x049D36570D4e46f48e99674bd3fcc84644DdD6b96F7C741B1562B82f9e004dC7",
 						amount: BigInt("100000000000000000").toString(),
 						// Your dapp contract
 						spender: "0x7e00d496e324876bbc8531f2d9a82bf154d1a04a50218ee74cdd372f75a551a",
 					},
-				],
+				] : undefined,
 			});
 
 			if (response) {
@@ -224,10 +225,17 @@ export default function App() {
 
 		<div className="flex flex-col min-h-screen p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
 			{!account && (
-				<button className="bg-white text-black p-2 rounded-md w-full max-w-md" onClick={handleConnect}
-								disabled={connectStatus !== "Connect"}>
-					{connectStatus}
-				</button>
+				<>
+					<label className="text-white p-2 rounded-md w-full max-w-md cursor-pointer">
+						<input type="checkbox" checked={withApproval} onClick={(a) => {
+							setWithApproval(a.currentTarget.checked)
+						}}/> With approval
+					</label>
+					<button className="bg-white text-black p-2 rounded-md w-full max-w-md" onClick={handleConnect}
+									disabled={connectStatus !== "Connect"}>
+						{connectStatus}
+					</button>
+				</>
 			)}
 
 			{account && (
