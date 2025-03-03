@@ -229,7 +229,7 @@ export default function App() {
 					<label className="text-white p-2 rounded-md w-full max-w-md cursor-pointer">
 						<input type="checkbox" checked={withApproval} onClick={(a) => {
 							setWithApproval(a.currentTarget.checked)
-						}}/> With approval
+						}}/> With approval requests
 					</label>
 					<button className="bg-white text-black p-2 rounded-md w-full max-w-md" onClick={handleConnect}
 									disabled={connectStatus !== "Connect"}>
