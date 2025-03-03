@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@argent/webwallet-sdk": "1.0.0-alpha.14",
+    "@argent/webwallet-sdk": "1.0.0-alpha.15",
     "next": "15.1.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
