@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { RpcProvider, constants } from "starknet";
-import { ArgentWebWallet, deployAndExecuteWithPaymaster, SessionAccountInterface } from "@argent/webwallet-sdk";
+import { ArgentWebWallet, deployAndExecuteWithPaymaster, SessionAccountInterface } from "@argent/invisible-sdk";
 
 const envName = (process.env.NEXT_PUBLIC_ENV_NAME) as "mainnet" | "sepolia"
 const isMainnet = envName === "mainnet";
@@ -227,7 +227,7 @@ export default function App() {
 			{!account && (
 				<>
 					<label className="text-white p-2 rounded-md w-full max-w-md cursor-pointer">
-						<input type="checkbox" checked={withApproval} onClick={(a) => {
+						<input type="checkbox" checked={withApproval} onChange={(a) => {
 							setWithApproval(a.currentTarget.checked)
 						}}/> With approval requests
 					</label>

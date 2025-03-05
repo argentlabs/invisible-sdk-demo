@@ -1,4 +1,6 @@
-# Demo dapp for [Web Wallet SDK](https://www.npmjs.com/package/@argent/webwallet-sdk)
+# Demo dapp for [Invisible SDK](https://www.npmjs.com/package/@argent/invisible-sdk)
+
+For SDK repo see [Invisible SDK](https://github.com/argentlabs/invisible-sdk)
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
