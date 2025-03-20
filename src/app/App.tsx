@@ -47,6 +47,7 @@ export default function App() {
 			],
 			validityDays: Number(process.env.NEXT_PUBLIC_VALIDITY_DAYS) || undefined,
 		},
+		webwalletTheme: "dark",
 		paymasterParams,
 	});
 
