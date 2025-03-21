@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@argent/invisible-sdk": "^1.1.0",
+    "@argent/invisible-sdk": "^1.1.1",
     "next": "15.1.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
