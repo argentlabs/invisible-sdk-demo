@@ -25,6 +25,7 @@ export default function App() {
 	const [account, setAccount] = useState<SessionAccountInterface | undefined>(undefined);
 	const [isLoading, setIsLoading] = useState(false);
 	const [txHash, setTxHash] = useState<string | undefined>();
+	const [requestingApprovals, setRequestingApprovals] = useState<boolean>(false);
 	const [counter, setCounter] = useState<bigint | undefined>();
 	const [withApproval, setWithApproval] = useState<boolean>(true);
 	const [connectStatus, setConnectStatus] = useState<"Connect" | "Connecting" | "Deploying account">("Connect");
@@ -171,6 +172,25 @@ export default function App() {
 		}
 	};
 
+	const handleRequestApprovals = async () => {
+		try {
+			setRequestingApprovals(true)
+			const approvalTxHash = await argentWebWallet.requestApprovals([{
+				tokenAddress: "0x049D36570D4e46f48e99674bd3fcc84644DdD6b96F7C741B1562B82f9e004dC7",
+				amount: BigInt("100000000000000000").toString(),
+				// Your dapp contract
+				spender: "0x7e00d496e324876bbc8531f2d9a82bf154d1a04a50218ee74cdd372f75a551a",
+			}])
+
+			console.log("Sending request approvals: ", approvalTxHash);
+			await provider.waitForTransaction(approvalTxHash)
+		} catch (err) {
+			console.error(err);
+		} finally {
+			setRequestingApprovals(false)
+		}
+	}
+
 	const handleSubmitTransactionButton = async () => {
 		try {
 			if (!account) {
@@ -243,6 +263,14 @@ export default function App() {
 				<>
 					<div className="flex flex-col gap-4 items-start">
 						<div>Account: {account.address}</div>
+						<button
+							className="bg-blue-300 text-black p-2 rounded-md w-full max-w-md"
+							onClick={handleRequestApprovals}
+							disabled={isLoading || requestingApprovals}
+						>
+							{requestingApprovals ? "Requesting" : "Request"} approvals
+						</button>
+
 						<button
 							className="bg-blue-300 text-black p-2 rounded-md w-full max-w-md"
 							onClick={handleSubmitTransactionButton}
